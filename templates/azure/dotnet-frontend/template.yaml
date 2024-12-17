@@ -79,7 +79,8 @@ spec:
         url: ./skeleton
         values:
           # azure devops uses `my-project/my-repo`
-          orgName: ${{ parameters.projectName }}
+          orgName: ${{ parameters.orgName }}
+          projectName: ${{ parameters.projectName }}
           repoName: ${{ parameters.repoName }}
           owner: ${{ parameters.owner }}
           system: ${{ parameters.system }}
