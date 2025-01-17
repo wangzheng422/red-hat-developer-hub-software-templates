@@ -9,7 +9,12 @@ resources:
   - repo: self
 
 variables:
-  tag: "$(Build.BuildId)"
+  # we will push the docker image to quay.io/wangzheng422/qimgs:azure-devops-demo-***
+  # changed based on your own env.
+  tag: "azure-devops-demo-$(Build.BuildId),azure-devops-demo-latest"
+  imageRepository: "wangzheng422/qimgs"
+  # remember to set up service connection, in project setting -> pipelines -> service connections
+  dockerRegistryServiceConnection: "quay.io"
 
 stages:
   - stage: Build
@@ -18,7 +23,7 @@ stages:
       - job: Build
         displayName: Build
         pool:
-          vmImage: ubuntu-latest
+          name: Default # use self-managed agent pool
         steps:
           - task: DockerInstaller@0
             inputs:
@@ -27,7 +32,9 @@ stages:
           - task: Docker@2
             displayName: Build an image
             inputs:
-              command: build
+              command: buildAndPush
+              repository: $(imageRepository)
+              containerRegistry: $(dockerRegistryServiceConnection)
               dockerfile: "$(Build.SourcesDirectory)/Dockerfile"
               tags: |
                 $(tag)
